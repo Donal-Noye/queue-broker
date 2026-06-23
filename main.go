@@ -139,12 +139,12 @@ func handler(b *broker) http.HandlerFunc {
 
 		switch r.Method {
 		case http.MethodPut:
-			msg := r.URL.Query().Get("v")
-			if msg == "" {
+			values, ok := r.URL.Query()["v"]
+			if !ok {
 				w.WriteHeader(http.StatusBadRequest)
 				return
 			}
-			b.put(name, msg)
+			b.put(name, values[0])
 			w.WriteHeader(http.StatusOK)
 		case http.MethodGet:
 			var timeout time.Duration
@@ -161,7 +161,7 @@ func handler(b *broker) http.HandlerFunc {
 				w.WriteHeader(http.StatusNotFound)
 				return
 			}
-			fmt.Fprintln(w, msg)
+			fmt.Fprint(w, msg)
 		default:
 			w.WriteHeader(http.StatusMethodNotAllowed)
 		}
