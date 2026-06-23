@@ -169,11 +169,16 @@ func handler(b *broker) http.HandlerFunc {
 }
 
 func main() {
+	if len(os.Args) < 2 {
+		fmt.Fprintln(os.Stderr, "usage: broker <port>")
+		os.Exit(1)
+	}
+
 	b := newBroker()
 	mux := http.NewServeMux()
 	mux.HandleFunc("/", handler(b))
 
-	if err := http.ListenAndServe(":8080", mux); err != nil {
+	if err := http.ListenAndServe(":"+os.Args[1], mux); err != nil {
 		fmt.Fprintln(os.Stderr, err)
 		os.Exit(1)
 	}
